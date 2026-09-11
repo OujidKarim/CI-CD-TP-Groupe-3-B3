@@ -1,0 +1,194 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-light);
+  padding: 12px 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.headerBrand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  transition: transform 0.2s ease;
+}
+
+.headerBrand:hover {
+  transform: scale(1.02);
+}
+
+.headerPicture {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.headerPicture img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.headerTitle {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-main);
+  letter-spacing: -0.5px;
+}
+
+.brandHighlight {
+  color: var(--poke-red);
+}
+
+.headerNav {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.headerLink {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-muted);
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.headerLink:hover {
+  color: var(--text-main);
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+.headerLink.active {
+  color: var(--poke-yellow);
+  background-color: rgba(250, 204, 21, 0.1);
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.headerUser {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.userBadge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  padding: 6px 14px;
+  border-radius: 9999px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.userIcon {
+  font-size: 14px;
+}
+
+.userName {
+  max-width: 120px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.logoutBtn {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.2s ease;
+}
+
+.logoutBtn:hover {
+  color: #fff;
+  background: rgba(239, 68, 68, 0.2);
+  border-color: var(--poke-red);
+}
+
+.headerAuth {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.signInBtn {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-main);
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
+}
+
+.signInBtn:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.signUpBtn {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  background: var(--poke-red);
+  padding: 8px 18px;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+  transition: all 0.2s ease;
+}
+
+.signUpBtn:hover {
+  background: var(--poke-red-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.5);
+}
+
+@media (max-width: 640px) {
+  .header {
+    padding: 10px 14px;
+  }
+  .headerLeft {
+    gap: 14px;
+  }
+  .headerTitle {
+    display: none;
+  }
+  .headerLink {
+    padding: 6px 10px;
+    font-size: 14px;
+  }
+  .userName {
+    display: none;
+  }
+}

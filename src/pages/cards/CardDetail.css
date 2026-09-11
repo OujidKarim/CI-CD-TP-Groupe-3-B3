@@ -1,0 +1,534 @@
+.cardDetailPage {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-primary);
+}
+
+.cardDetailMain {
+  flex: 1;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 30px 20px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.cardDetailNav {
+  display: flex;
+  align-items: center;
+}
+
+.backBtn {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
+}
+
+.backBtn:hover {
+  color: var(--poke-yellow);
+  border-color: var(--border-light);
+  transform: translateX(-3px);
+}
+
+/* Toast */
+.cardToast {
+  position: fixed;
+  top: 75px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-card);
+  border: 1px solid var(--poke-green);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 9999px;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  z-index: 2000;
+  animation: toastIn 0.25s ease;
+}
+
+/* 2-Column Card Details Container */
+.cardDetailContainer {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 40px;
+  align-items: start;
+}
+
+/* Left Column: Visual */
+.cardVisualCol {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: sticky;
+  top: 90px;
+}
+
+.cardVisualFrame {
+  width: 100%;
+  aspect-ratio: 2.5 / 3.5;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: #0f172a;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cardVisualFrame img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.cardVisualFrame:hover img {
+  transform: scale(1.03);
+}
+
+.cardVisualFallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-size: 48px;
+  color: var(--text-muted);
+}
+
+.cardVisualFallback p {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.addToDeckMainBtn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, var(--poke-red) 0%, #b91c1c 100%);
+  color: white;
+  border-radius: var(--radius-md);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  box-shadow: 0 6px 18px rgba(239, 68, 68, 0.4);
+  transition: all 0.2s ease;
+}
+
+.addToDeckMainBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(239, 68, 68, 0.6);
+}
+
+/* Right Column: Info & Stats */
+.cardInfoCol {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 20px;
+}
+
+.cardTitleGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cardCategory {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--poke-yellow);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.cardMainName {
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--text-main);
+  line-height: 1.1;
+}
+
+.cardHeaderMeta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cardHpBadge {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  padding: 6px 14px;
+  border-radius: 9999px;
+}
+
+.hpLabel {
+  font-size: 12px;
+  font-weight: 700;
+  color: #fca5a5;
+}
+
+.hpValue {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 800;
+  color: #fff;
+}
+
+.cardTypesList {
+  display: flex;
+  gap: 6px;
+}
+
+/* Type Badges */
+.typeBadge {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: white;
+  background: #64748b;
+}
+
+.type-plante, .type-grass { background: #16a34a; }
+.type-feu, .type-fire { background: #dc2626; }
+.type-eau, .type-water { background: #0284c7; }
+.type-électrique, .type-lightning, .type-electrique { background: #ca8a04; }
+.type-psy, .type-psychic { background: #c026d3; }
+.type-combat, .type-fighting { background: #ea580c; }
+.type-obscurité, .type-darkness, .type-obscurite { background: #334155; }
+.type-métal, .type-metal { background: #64748b; }
+.type-dragon { background: #7c3aed; }
+.type-fée, .type-fairy, .type-fee { background: #db2777; }
+.type-incolore, .type-colorless { background: #475569; }
+
+/* Metadata Grid */
+.cardMetaGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+}
+
+.metaItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.metaLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+.metaValue {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+/* Description Box */
+.cardDescriptionBox {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.boxTitle {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--poke-yellow);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.cardDescriptionBox p {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* Attacks Section */
+.cardAttacksSection {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.sectionTitle {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.attacksList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.attackCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: border-color 0.2s;
+}
+
+.attackCard:hover {
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+.attackTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.attackCostName {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.energyCostRow {
+  display: flex;
+  gap: 4px;
+}
+
+.energyPill {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+  color: var(--text-main);
+}
+
+.attackName {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.attackDamageBadge {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--poke-red);
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  padding: 4px 12px;
+  border-radius: var(--radius-sm);
+}
+
+.attackDesc {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* Combat Stats Grid (Weakness / Resistance) */
+.combatStatsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.combatStatBox {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.combatStatLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+.combatStatList {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.statPill {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+}
+
+.statPill.weakness {
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.statPill.resistance {
+  background: rgba(2, 132, 199, 0.15);
+  color: #7dd3fc;
+  border: 1px solid rgba(2, 132, 199, 0.3);
+}
+
+/* Deck Select Modal */
+.deckModalCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xl);
+  width: 100%;
+  max-width: 500px;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+  animation: fadeIn 0.2s ease;
+}
+
+.deckModalBody {
+  padding: 20px;
+}
+
+.modalDecksList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modalDeckOptionBtn {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.modalDeckOptionBtn:hover {
+  border-color: var(--poke-red);
+  background: #1e293b;
+  transform: translateX(4px);
+}
+
+.modalDeckInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.modalDeckName {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.modalDeckCount {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.modalAddArrow {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--poke-red);
+}
+
+.noDecksNotice {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 14px;
+  padding: 20px;
+}
+
+/* Loading & Error */
+.cardLoading, .cardError {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  gap: 16px;
+  text-align: center;
+  background: var(--bg-card);
+  border: 1px dashed var(--border-light);
+  border-radius: var(--radius-xl);
+}
+
+.errorIcon {
+  font-size: 40px;
+}
+
+.errorBackBtn {
+  padding: 10px 20px;
+  background: var(--poke-red);
+  color: white;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+@media (max-width: 860px) {
+  .cardDetailContainer {
+    grid-template-columns: 1fr;
+  }
+  .cardVisualCol {
+    position: static;
+    max-width: 320px;
+    margin: 0 auto;
+  }
+}

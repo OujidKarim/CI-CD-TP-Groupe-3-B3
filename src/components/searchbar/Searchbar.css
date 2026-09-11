@@ -1,0 +1,328 @@
+.searchContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+.searchControls {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.searchInputWrapper {
+  flex: 1 1 300px;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 14px;
+  font-size: 16px;
+  color: var(--text-dim);
+  pointer-events: none;
+}
+
+.searchBarInput {
+  width: 100%;
+  padding: 12px 42px 12px 42px;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  color: var(--text-main);
+  font-size: 15px;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.searchBarInput:focus {
+  border-color: var(--poke-red);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.25);
+  background-color: #172033;
+}
+
+.clearSearchBtn {
+  position: absolute;
+  right: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-muted);
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clearSearchBtn:hover {
+  background: var(--poke-red);
+  color: white;
+}
+
+.setFilterSelect {
+  flex: 0 1 240px;
+  padding: 12px 16px;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  color: var(--text-main);
+  font-size: 15px;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.setFilterSelect:focus {
+  border-color: var(--poke-red);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.25);
+}
+
+.setFilterSelect option {
+  background-color: var(--bg-secondary);
+  color: var(--text-main);
+}
+
+.searchStats {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-dim);
+  padding: 0 4px;
+}
+
+/* Cards Grid */
+.cardsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 20px;
+  list-style: none;
+  padding: 0;
+}
+
+.cardGridItem {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  overflow: hidden;
+}
+
+.cardGridItem:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5);
+  border-color: rgba(239, 68, 68, 0.5);
+}
+
+.cardPreviewWrapper {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.cardImageFrame {
+  width: 100%;
+  aspect-ratio: 2.5 / 3.5;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background-color: #0f172a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.cardImageFrame img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.cardGridItem:hover .cardImageFrame img {
+  transform: scale(1.04);
+}
+
+.cardPlaceholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  text-align: center;
+  height: 100%;
+  gap: 8px;
+}
+
+.placeholderIcon {
+  font-size: 32px;
+}
+
+.placeholderName {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.cardGridName {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-main);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.cardAddBtn {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: var(--poke-red);
+  color: white;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.cardAddBtn:hover {
+  background: var(--poke-red-hover);
+  transform: translateY(-1px);
+}
+
+.cardAddBtn.added {
+  background: var(--poke-green);
+}
+
+/* Pagination */
+.searchPagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 20px;
+  padding: 12px 0;
+}
+
+.paginationBtn {
+  padding: 8px 18px;
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.paginationBtn:hover:not(:disabled) {
+  background: var(--poke-red);
+  border-color: var(--poke-red);
+  color: white;
+}
+
+.paginationBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.paginationInfo {
+  font-size: 14px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Loading & Empty states */
+.searchLoading, .searchEmpty, .searchPrompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  gap: 12px;
+  background: var(--bg-card);
+  border: 1px dashed var(--border-light);
+  border-radius: var(--radius-lg);
+}
+
+.emptyIcon {
+  font-size: 40px;
+  opacity: 0.6;
+}
+
+.emptyTitle, .promptTitle {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.emptySub, .promptSub {
+  font-size: 14px;
+  color: var(--text-muted);
+  max-width: 420px;
+}
+
+/* Pokéball Spinner */
+.pokeballSpinner {
+  width: 48px;
+  height: 48px;
+  background-color: #fff;
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+  border: 3px solid #333;
+  animation: spin 1s linear infinite;
+}
+
+.pokeballSpinner::before {
+  content: "";
+  position: absolute;
+  background-color: var(--poke-red);
+  width: 100%;
+  height: 50%;
+  top: 0;
+}
+
+.pokeballSpinner::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 14px;
+  height: 14px;
+  background-color: #fff;
+  border: 3px solid #333;
+  border-radius: 50%;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 640px) {
+  .cardsGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .setFilterSelect {
+    flex: 1 1 100%;
+  }
+}
