@@ -1,0 +1,177 @@
+name: CD - ReactDex Deployment
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+      - develop
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environnement de déploiement manuel'
+        required: true
+        default: 'development'
+        type: choice
+        options:
+          - development
+          - pre-production
+          - production
+
+concurrency:
+  group: cd-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build-and-push-docker:
+    name: Build & Déploiement Image Docker Hub
+    runs-on: ubuntu-latest
+    outputs:
+      image_tag: ${{ steps.meta.outputs.tag }}
+      image_name: ${{ steps.meta.outputs.image_name }}
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Configuration de Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Connexion au registre Docker Hub (Service Externe)
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Détermination dynamique du tag Docker selon la branche
+        id: meta
+        run: |
+          DOCKER_USER="${{ secrets.DOCKERHUB_USERNAME || 'group03' }}"
+          IMAGE_NAME="${DOCKER_USER}/reactdex-app"
+          REF_NAME="${{ github.ref_name }}"
+
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TAG="${{ github.event.inputs.environment }}"
+          elif [ "$REF_NAME" = "main" ]; then
+            TAG="production"
+          elif [ "$REF_NAME" = "staging" ]; then
+            TAG="staging"
+          elif [ "$REF_NAME" = "develop" ]; then
+            TAG="develop"
+          else
+            TAG="latest"
+          fi
+
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "image_name=$IMAGE_NAME" >> $GITHUB_OUTPUT
+          echo "Image Docker cible: $IMAGE_NAME:$TAG"
+
+      - name: Build et Push de l'image Docker sur Docker Hub
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: |
+            ${{ steps.meta.outputs.image_name }}:${{ steps.meta.outputs.tag }}
+            ${{ steps.meta.outputs.image_name }}:${{ steps.meta.outputs.tag }}-${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy-development:
+    name: Déploiement Environnement Développement
+    needs: build-and-push-docker
+    if: github.ref == 'refs/heads/develop' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'development')
+    runs-on: ubuntu-latest
+    environment:
+      name: développement
+      url: http://${{ secrets.SSH_HOST }}:3001
+    steps:
+      - name: Déploiement SSH - Environnement Développement (branche develop)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            echo "=== Déploiement Environnement Développement ==="
+            docker pull ${{ needs.build-and-push-docker.outputs.image_name }}:${{ needs.build-and-push-docker.outputs.image_tag }}
+            docker stop reactdex-dev || true
+            docker rm reactdex-dev || true
+            docker run -d \
+              --name reactdex-dev \
+              --restart unless-stopped \
+              -p 3001:80 \
+              ${{ needs.build-and-push-docker.outputs.image_name }}:${{ needs.build-and-push-docker.outputs.image_tag }}
+            echo "Application ReactDex déployée avec succès sur l'environnement de développement (port 3001)"
+
+  deploy-pre-production:
+    name: Déploiement Environnement Pre-Production (après 1h)
+    needs: build-and-push-docker
+    if: github.ref == 'refs/heads/staging' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'pre-production')
+    runs-on: ubuntu-latest
+    environment:
+      name: pre-production
+      url: http://${{ secrets.SSH_HOST }}:3002
+    steps:
+      - name: Vérification du délai réglementaire de 1h
+        run: |
+          echo "=== Politique de délai de déploiement Pre-Production ==="
+          echo "Règle appliquée : Déploiement en pre-production après un délai de 1 heure."
+          echo "Ce délai est géré via la règle de protection 'Wait timer' (60 minutes) de l'environnement GitHub 'pre-production'."
+          if [ -n "${{ vars.PREPROD_DELAY_SECONDS }}" ]; then
+            echo "Délai additionnel actif de ${{ vars.PREPROD_DELAY_SECONDS }} secondes..."
+            sleep ${{ vars.PREPROD_DELAY_SECONDS }}
+          fi
+
+      - name: Déploiement SSH - Environnement Pre-Production (branche staging)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            echo "=== Déploiement Environnement Pre-Production ==="
+            docker pull ${{ needs.build-and-push-docker.outputs.image_name }}:${{ needs.build-and-push-docker.outputs.image_tag }}
+            docker stop reactdex-staging || true
+            docker rm reactdex-staging || true
+            docker run -d \
+              --name reactdex-staging \
+              --restart unless-stopped \
+              -p 3002:80 \
+              ${{ needs.build-and-push-docker.outputs.image_name }}:${{ needs.build-and-push-docker.outputs.image_tag }}
+            echo "Application ReactDex déployée avec succès sur l'environnement de pre-production (port 3002)"
+
+  deploy-production:
+    name: Déploiement Environnement Production (Manuel)
+    needs: build-and-push-docker
+    if: (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'production') || github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: http://${{ secrets.SSH_HOST }}:3000
+    steps:
+      - name: Validation du déclenchement manuel
+        run: |
+          echo "=== Validation Déploiement Production ==="
+          echo "Ce déploiement est soumis à validation manuelle via les 'Required reviewers' de l'environnement GitHub ou déclenchement manuel via workflow_dispatch."
+
+      - name: Déploiement SSH - Environnement Production (branche main)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            echo "=== Déploiement Environnement Production (Manuel) ==="
+            docker pull ${{ needs.build-and-push-docker.outputs.image_name }}:${{ needs.build-and-push-docker.outputs.image_tag }}
+            docker stop reactdex-prod || true
+            docker rm reactdex-prod || true
+            docker run -d \
+              --name reactdex-prod \
+              --restart unless-stopped \
+              -p 3000:80 \
+              ${{ needs.build-and-push-docker.outputs.image_name }}:${{ needs.build-and-push-docker.outputs.image_tag }}
+            echo "Application ReactDex déployée avec succès sur l'environnement de production (port 3000)"

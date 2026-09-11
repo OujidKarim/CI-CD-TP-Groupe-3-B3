@@ -1,0 +1,118 @@
+name: CI - ReactDex Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+      - develop
+  pull_request:
+    branches:
+      - main
+      - staging
+      - develop
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  audit-dependencies:
+    name: Audit des dépendances
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Configuration de Node.js (avec gestion du cache npm)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Installation des dépendances
+        run: npm ci
+
+      - name: Audit des dépendances de sécurité
+        run: npm audit --audit-level=critical
+
+  code-quality:
+    name: Qualité du code (ESLint)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Configuration de Node.js (avec gestion du cache npm)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Installation des dépendances
+        run: npm ci
+
+      - name: Analyse de la qualité du code
+        run: npm run lint
+
+  automated-tests:
+    name: Tests automatisés & Service externe
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Configuration de Node.js (avec gestion du cache npm)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Installation des dépendances
+        run: npm ci
+
+      - name: Test de connectivité avec le service externe Redis
+        run: |
+          echo "Vérification de la connectivité au service externe Redis..."
+          nc -z localhost 6379 && echo "Service Redis externe opérationnel sur le port 6379"
+
+      - name: Exécution des tests automatisés (Unitaires et API externe TCGdex)
+        run: npm test
+
+  build-and-artifact:
+    name: Build & Création d'artefacts
+    needs: [audit-dependencies, code-quality, automated-tests]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Configuration de Node.js (avec gestion du cache npm)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Installation des dépendances
+        run: npm ci
+
+      - name: Compilation de l'application
+        run: npm run build
+
+      - name: Sauvegarde de l'artefact de build
+        uses: actions/upload-artifact@v4
+        with:
+          name: reactdex-dist
+          path: dist/
+          retention-days: 7
