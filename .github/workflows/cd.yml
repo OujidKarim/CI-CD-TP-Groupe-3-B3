@@ -84,7 +84,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: développement
-      url: http://${{ secrets.SSH_HOST }}:3001
+      url: http://13.140.135.144:3001
     steps:
       - name: Déploiement SSH - Environnement Développement (branche develop)
         uses: appleboy/ssh-action@v1.0.3
@@ -112,7 +112,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: pre-production
-      url: http://${{ secrets.SSH_HOST }}:3002
+      url: http://13.140.135.144:3002
     steps:
       - name: Vérification du délai réglementaire de 1h
         run: |
@@ -150,7 +150,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: production
-      url: http://${{ secrets.SSH_HOST }}:3000
+      url: http://13.140.135.144:3000
     steps:
       - name: Validation du déclenchement manuel
         run: |
